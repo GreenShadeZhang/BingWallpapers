@@ -1,4 +1,5 @@
 ﻿using BingWallpapers.Models;
+using BingWallpapers.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Web.Http;
 
 // https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 
@@ -35,12 +37,15 @@ namespace BingWallpapers
             //此集合为GridView的source
             ObservableCollection<WallpapersDetail> picModels = new ObservableCollection<WallpapersDetail>();
             //json文件的url
-            Uri uri = new Uri("ms-appx:///Assets/file.json");
-            var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
-            //读取的json文本
-            string text = await Windows.Storage.FileIO.ReadTextAsync(file);
-            //然后反序列化成类
-            WallpapersData wallPaperModel = Newtonsoft.Json.JsonConvert.DeserializeObject<WallpapersData>(text);
+            //Uri uri = new Uri("ms-appx:///Assets/file.json");
+            //var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
+            ////读取的json文本
+            //string text = await Windows.Storage.FileIO.ReadTextAsync(file);
+            ////然后反序列化成类
+            //WallpapersData wallPaperModel = Newtonsoft.Json.JsonConvert.DeserializeObject<WallpapersData>(text);
+
+            WallpaperService wallpaperService = new WallpaperService();
+            WallpapersData wallPaperModel = await wallpaperService.GetWallparper(1, 8);
             //通过重新组装成集合给GridView
             foreach (var item in wallPaperModel.images)
             {
@@ -51,6 +56,26 @@ namespace BingWallpapers
                 });
             }
             GV.ItemsSource = picModels;
+        }
+        /// <summary>
+        /// 要保存的图片对象
+        /// </summary>
+        private WallpapersDetail wallpapers;
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            var menuFlyout = sender as MenuFlyout;
+            var gridViewItem = menuFlyout.Target as GridViewItem;
+            wallpapers = gridViewItem.Content as WallpapersDetail;
+        }
+
+        private async void Save_Click(object sender, RoutedEventArgs e)
+        {
+            Uri uri2 = new Uri(wallpapers.Source);
+            var httpClientPicData = new HttpClient();
+            var resBuffer = await httpClientPicData.GetBufferAsync(uri2);
+            StorageFolder destinationFolder = await KnownFolders.PicturesLibrary.CreateFolderAsync("BingWallpapers", CreationCollisionOption.OpenIfExists);
+            var destinationFile = await destinationFolder.CreateFileAsync("BingWallparpers"+DateTime.Now.Ticks + ".jpg", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteBufferAsync(destinationFile, resBuffer);
         }
     }
 }

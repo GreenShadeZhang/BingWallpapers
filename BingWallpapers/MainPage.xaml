@@ -20,6 +20,14 @@
                     </StackPanel>
                 </DataTemplate>
             </GridView.ItemTemplate>
+            <GridView.ContextFlyout>
+                <MenuFlyout Opening="MenuFlyout_Opening">
+                    <MenuFlyoutItem Text="保存"
+                                    x:Name="Save"
+                                    Click="Save_Click"/>
+                </MenuFlyout>
+
+            </GridView.ContextFlyout>
         </GridView>
     </Grid>
 </Page>
