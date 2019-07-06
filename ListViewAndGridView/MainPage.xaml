@@ -1,0 +1,57 @@
+﻿<Page
+    x:Class="ListViewAndGridView.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ListViewAndGridView"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:data="using:ListViewAndGridView.Models"
+    Loaded="Page_Loaded"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <ListView x:Name="Lv">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="data:Son">
+                    <Grid Margin="0,12,0,12" AutomationProperties.Name="{x:Bind title}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <GridView x:Name="Tile4"                                               
+                                                  Grid.Row="0"
+                                                  Background="LightGray"                                               
+                                                  ItemsSource="{x:Bind sons}"
+                                                  >
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="data:Son">
+                                    <TextBlock Text="{x:Bind title}"/>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                        <ListView 
+                            ItemsSource="{x:Bind sons}"
+                               Grid.Row="1">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="data:Son">
+                                    <GridView x:Name="Tile4"                                               
+                                                  Grid.Row="0"
+                                                  Background="LightGray"                                               
+                                                  ItemsSource="{x:Bind sons}"
+                                                  >
+                                        <GridView.ItemTemplate>
+                                            <DataTemplate x:DataType="data:Son">
+                                                <TextBlock Text="{x:Bind title}"/>
+                                            </DataTemplate>
+                                        </GridView.ItemTemplate>
+                                    </GridView>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>
